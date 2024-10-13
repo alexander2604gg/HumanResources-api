@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://dpg-cs5fdvd6l47c73f4a9lg-a.oregon-postgres.render.com:5432/db_rrhh
+    username: db_rrhh_user
+    password: 7wWjkt0NxnZMvMRIBRqho18SHctr8VRU
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+    hibernate:
+      ddl-auto: update
+    show-sql: true
