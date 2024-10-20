@@ -12,6 +12,7 @@ import com.alexandersaul.rrhh_project.repository.UserSecRepository;
 import com.alexandersaul.rrhh_project.service.IEmployeeService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,7 +40,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
                 .userName(employeeRegisterDto.getFirstName()+employeeRegisterDto.getFirstSurname())
                 .email(employeeRegisterDto.getEmail())
                 .active(true)
-                .password(employeeRegisterDto.getDocument().getDocumentNumber())
+                .password(encryptPassword(employeeRegisterDto.getDocument().getDocumentNumber()))
                 .build();
 
         Employee employee = employeeMapper.toEntity(employeeRegisterDto);
@@ -49,4 +50,10 @@ public class EmployeeServiceImpl implements IEmployeeService {
         employeeRepository.save(employee);
 
     }
+
+    @Override
+    public String encryptPassword(String password) {
+        return new BCryptPasswordEncoder().encode(password);
+    }
+
 }
