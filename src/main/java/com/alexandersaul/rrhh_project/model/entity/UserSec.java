@@ -1,12 +1,14 @@
 package com.alexandersaul.rrhh_project.model.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Set;
 
 @Data
 @Entity
+@Builder
 @Table(name = "Users")
 public class UserSec {
 
