@@ -22,6 +22,9 @@ public class Contract {
     private BigDecimal grossSalary;
     @Column (name = "contract_path")
     private String contractPath;
+    @ManyToOne( fetch = FetchType.LAZY , cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "job_id", nullable = false)
+    private Job job ;
     private boolean active;
     @ManyToOne( fetch = FetchType.LAZY , cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "employee_id", nullable = false)

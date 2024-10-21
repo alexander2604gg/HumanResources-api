@@ -14,6 +14,7 @@ public class EmployeeRegisterDto {
     private String email;
     private String address;
     private DocumentInfoDto document;
+    private Integer roleId;
 
     @Data
     @NoArgsConstructor
