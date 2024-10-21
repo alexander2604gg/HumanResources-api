@@ -15,6 +15,7 @@ import com.alexandersaul.rrhh_project.repository.UserSecRepository;
 import com.alexandersaul.rrhh_project.service.IEmployeeService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,8 +53,8 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
         roles.add(role);
 
-        if (role.getRolName() == RoleName.RECURSOS_HUMANOS) {
-            Role roleEmployee = roleRepository.findByName(RoleName.COLABORADOR)
+        if (role.getRoleName()== RoleName.RECURSOS_HUMANOS) {
+            Role roleEmployee = roleRepository.findByRoleName(RoleName.COLABORADOR)
                     .orElseThrow(() -> new RuntimeException("Colaborador role not found"));
             roles.add(roleEmployee);
         }
@@ -63,7 +64,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
                 .email(employeeRegisterDto.getEmail())
                 .rolesList(roles)
                 .active(true)
-                .password(employeeRegisterDto.getDocument().getDocumentNumber())
+                .password(encryptPassword(employeeRegisterDto.getDocument().getDocumentNumber()))
                 .build();
 
 
@@ -74,5 +75,11 @@ public class EmployeeServiceImpl implements IEmployeeService {
         employeeRepository.save(employee);
 
     }
+
+    @Override
+    public String encryptPassword(String password) {
+        return new BCryptPasswordEncoder().encode(password);
+    }
+
 
 }
