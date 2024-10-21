@@ -1,4 +1,5 @@
 package com.alexandersaul.rrhh_project.model.entity;
+import com.alexandersaul.rrhh_project.model.enums.ViewName;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,6 +10,6 @@ public class View {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column (name = "view_name")
-    private String viewName;
+    @Enumerated(EnumType.STRING)
+    private ViewName viewName;
 }

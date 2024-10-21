@@ -1,5 +1,6 @@
 package com.alexandersaul.rrhh_project.model.entity;
 
+import com.alexandersaul.rrhh_project.model.enums.RoleName;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Set;
@@ -11,8 +12,8 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "role_name")
-    private String rolName;
+    @Enumerated(EnumType.STRING)
+    private RoleName rolName;
     @Lob
     private String description;
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
