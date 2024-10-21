@@ -10,7 +10,6 @@ import com.alexandersaul.rrhh_project.model.enums.DocumentName;
 import com.alexandersaul.rrhh_project.model.enums.RoleName;
 import com.alexandersaul.rrhh_project.repository.DocumentTypeRepository;
 import com.alexandersaul.rrhh_project.repository.EmployeeRepository;
-import com.alexandersaul.rrhh_project.repository.RoleRepository;
 import com.alexandersaul.rrhh_project.repository.UserSecRepository;
 import com.alexandersaul.rrhh_project.service.IEmployeeService;
 import jakarta.transaction.Transactional;
@@ -18,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -29,14 +26,11 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
     private DocumentTypeRepository documentTypeRepository;
     @Autowired
     private UserSecRepository userSecRepository;
     @Autowired
     private EmployeeMapper employeeMapper;
-
 
     @Transactional
     @Override
@@ -80,6 +74,4 @@ public class EmployeeServiceImpl implements IEmployeeService {
     public String encryptPassword(String password) {
         return new BCryptPasswordEncoder().encode(password);
     }
-
-
 }
