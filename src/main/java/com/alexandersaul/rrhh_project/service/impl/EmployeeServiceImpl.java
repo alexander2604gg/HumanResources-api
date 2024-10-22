@@ -6,12 +6,12 @@ import com.alexandersaul.rrhh_project.model.entity.DocumentType;
 import com.alexandersaul.rrhh_project.model.entity.Employee;
 import com.alexandersaul.rrhh_project.model.entity.Role;
 import com.alexandersaul.rrhh_project.model.entity.UserSec;
-import com.alexandersaul.rrhh_project.model.enums.DocumentName;
 import com.alexandersaul.rrhh_project.model.enums.RoleName;
-import com.alexandersaul.rrhh_project.repository.DocumentTypeRepository;
 import com.alexandersaul.rrhh_project.repository.EmployeeRepository;
-import com.alexandersaul.rrhh_project.repository.UserSecRepository;
+import com.alexandersaul.rrhh_project.service.IDocumentTypeService;
 import com.alexandersaul.rrhh_project.service.IEmployeeService;
+import com.alexandersaul.rrhh_project.service.IRoleService;
+import com.alexandersaul.rrhh_project.service.IUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,35 +26,29 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
-    private DocumentTypeRepository documentTypeRepository;
-    @Autowired
-    private UserSecRepository userSecRepository;
-    @Autowired
     private EmployeeMapper employeeMapper;
+    @Autowired
+    private IRoleService roleService;
+    @Autowired
+    private IDocumentTypeService documentTypeService;
+    @Autowired
+    private IUserService userService;
+
 
     @Transactional
     @Override
     public void registerEmployee(EmployeeRegisterDto employeeRegisterDto) {
 
-        DocumentType documentType = documentTypeRepository.findById(
-                        employeeRegisterDto.getDocument().getDocumentTypeId())
-                .orElseThrow(() -> new RuntimeException("Invalid document"));
-
-        Role role = roleRepository.findById(employeeRegisterDto.getRoleId())
-                .orElseThrow(() -> new RuntimeException("Invalid role"));
-
-        Set<Role> roles = new HashSet<>();
-
-        roles.add(role);
-
-        if (role.getRoleName()== RoleName.RECURSOS_HUMANOS) {
-            Role roleEmployee = roleRepository.findByRoleName(RoleName.COLABORADOR)
-                    .orElseThrow(() -> new RuntimeException("Colaborador role not found"));
-            roles.add(roleEmployee);
-        }
+        DocumentType documentType = documentTypeService.findById(employeeRegisterDto.getDocument().getDocumentTypeId());
+        Set<Role> roles = assignRoles(employeeRegisterDto.getRoleId());
 
         UserSec userSec = UserSec.builder()
-                .userName(employeeRegisterDto.getFirstName() + employeeRegisterDto.getFirstSurname())
+                .userName(
+                        userService.generateEmployeeUsername(
+                                employeeRegisterDto.getFirstName(),
+                                employeeRegisterDto.getFirstSurname() ,
+                                employeeRegisterDto.getDateOfBirth())
+                )
                 .email(employeeRegisterDto.getEmail())
                 .rolesList(roles)
                 .active(true)
@@ -68,6 +62,17 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
         employeeRepository.save(employee);
 
+    }
+
+    @Override
+    public Set<Role> assignRoles (Integer roleId) {
+        Role role = roleService.findById(roleId);
+        Set<Role> roles = new HashSet<>(Set.of(role));
+        if (role.getRoleName() == RoleName.RECURSOS_HUMANOS) {
+            Role roleColaborador = roleService.findByRoleName(RoleName.COLABORADOR);
+            roles.add(roleColaborador);
+        }
+        return roles;
     }
 
     @Override

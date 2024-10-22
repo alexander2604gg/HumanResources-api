@@ -3,6 +3,9 @@ package com.alexandersaul.rrhh_project.model.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 @Data
 @Entity
 @Table(name = "Employees")
@@ -21,6 +24,7 @@ public class Employee {
     private String secondSurname;
     @Column(name = "num_phone" , length = 9)
     private String numPhone;
+    private LocalDate dateOfBirth;
     @Column(length = 100)
     private String address;
     @Column(length = 15)
