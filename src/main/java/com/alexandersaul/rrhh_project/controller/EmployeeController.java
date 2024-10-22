@@ -1,6 +1,8 @@
 package com.alexandersaul.rrhh_project.controller;
 
+import com.alexandersaul.rrhh_project.constants.EmployeeConstants;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeRegisterDto;
+import com.alexandersaul.rrhh_project.dto.response.ResponseDto;
 import com.alexandersaul.rrhh_project.service.IEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,10 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<String> registerEmployee(@RequestBody EmployeeRegisterDto employeeRegisterDto) {
+    public ResponseEntity<ResponseDto> registerEmployee(@RequestBody EmployeeRegisterDto employeeRegisterDto) {
         employeeService.registerEmployee(employeeRegisterDto);
         return ResponseEntity.ok()
-                .body("Employee created");
+                .body(new ResponseDto(EmployeeConstants.STATUS_201 , EmployeeConstants.MESSAGE_201));
     }
 
     @PutMapping("/{id}")
