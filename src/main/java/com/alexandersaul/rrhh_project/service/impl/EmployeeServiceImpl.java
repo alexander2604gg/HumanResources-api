@@ -89,7 +89,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
                 () -> new RuntimeException("Empleado no encontrado")
         );
         employee.setNumPhone(employeeUpdateDto.getNumPhone());
-        employee.setAddress(employee.getAddress());
+        employee.setAddress(employeeUpdateDto.getAddress());
 
         employeeRepository.save(employee);
     }
