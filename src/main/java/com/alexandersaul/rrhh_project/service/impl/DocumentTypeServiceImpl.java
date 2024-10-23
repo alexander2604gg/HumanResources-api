@@ -1,5 +1,6 @@
 package com.alexandersaul.rrhh_project.service.impl;
 
+import com.alexandersaul.rrhh_project.exception.ResourceNotFoundException;
 import com.alexandersaul.rrhh_project.model.entity.DocumentType;
 import com.alexandersaul.rrhh_project.repository.DocumentTypeRepository;
 import com.alexandersaul.rrhh_project.service.IDocumentTypeService;
@@ -15,7 +16,7 @@ public class DocumentTypeServiceImpl implements IDocumentTypeService {
     @Override
     public DocumentType findById(Integer documentTypeId) {
         return documentTypeRepository.findById(documentTypeId).orElseThrow(
-                () -> new RuntimeException("Document type no encontrado")
+                () -> new ResourceNotFoundException("DocumentType" , "documentTypeId" , documentTypeId.toString())
         );
     }
 }
