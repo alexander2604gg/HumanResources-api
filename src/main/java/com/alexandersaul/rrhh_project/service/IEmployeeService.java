@@ -1,12 +1,17 @@
 package com.alexandersaul.rrhh_project.service;
 
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeRegisterDto;
+import com.alexandersaul.rrhh_project.dto.employee.EmployeeResponseDto;
+import com.alexandersaul.rrhh_project.model.entity.Employee;
 import com.alexandersaul.rrhh_project.model.entity.Role;
+import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Set;
 
 public interface IEmployeeService {
 
+    Page<EmployeeResponseDto> getEmployeesPaginated (int page , int size);
     void registerEmployee (EmployeeRegisterDto employeeRegisterDto);
     Set<Role> assignRoles (Integer roleId);
     String encryptPassword(String password);
