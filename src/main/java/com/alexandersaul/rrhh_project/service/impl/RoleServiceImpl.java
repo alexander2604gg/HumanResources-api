@@ -1,5 +1,6 @@
 package com.alexandersaul.rrhh_project.service.impl;
 
+import com.alexandersaul.rrhh_project.exception.ResourceNotFoundException;
 import com.alexandersaul.rrhh_project.model.entity.Role;
 import com.alexandersaul.rrhh_project.model.enums.RoleName;
 import com.alexandersaul.rrhh_project.repository.RoleRepository;
@@ -16,14 +17,14 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public Role findById(Integer roleId) {
         return roleRepository.findById(roleId).orElseThrow(
-                () -> new RuntimeException("Rol no encontrado")
+                () -> new ResourceNotFoundException("Role" , "roleId" , roleId.toString())
         );
     }
 
     @Override
     public Role findByRoleName(RoleName roleName) {
         return roleRepository.findByRoleName(roleName).orElseThrow(
-                () -> new RuntimeException("Rol no encontrado")
+                () -> new ResourceNotFoundException("Role" , "roleName" , roleName.toString())
         );
     }
 }
