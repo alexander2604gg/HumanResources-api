@@ -2,6 +2,7 @@ package com.alexandersaul.rrhh_project.service.impl;
 
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeRegisterDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeResponseDto;
+import com.alexandersaul.rrhh_project.dto.employee.EmployeeUpdateDto;
 import com.alexandersaul.rrhh_project.mapper.EmployeeMapper;
 import com.alexandersaul.rrhh_project.model.entity.DocumentType;
 import com.alexandersaul.rrhh_project.model.entity.Employee;
@@ -80,6 +81,17 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
         employeeRepository.save(employee);
 
+    }
+
+    @Override
+    public void updateEmployee( Integer employeeId , EmployeeUpdateDto employeeUpdateDto) {
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
+                () -> new RuntimeException("Empleado no encontrado")
+        );
+        employee.setNumPhone(employeeUpdateDto.getNumPhone());
+        employee.setAddress(employeeUpdateDto.getAddress());
+
+        employeeRepository.save(employee);
     }
 
     @Override
