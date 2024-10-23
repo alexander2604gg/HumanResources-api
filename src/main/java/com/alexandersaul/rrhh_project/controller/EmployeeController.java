@@ -3,6 +3,7 @@ package com.alexandersaul.rrhh_project.controller;
 import com.alexandersaul.rrhh_project.constants.EmployeeConstants;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeRegisterDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeResponseDto;
+import com.alexandersaul.rrhh_project.dto.employee.EmployeeUpdateDto;
 import com.alexandersaul.rrhh_project.dto.response.ResponseDto;
 import com.alexandersaul.rrhh_project.service.IEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,11 @@ public class EmployeeController {
                 .body(new ResponseDto(EmployeeConstants.STATUS_201 , EmployeeConstants.MESSAGE_201));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateEmployee() {
-        return ResponseEntity.ok().build();
+    @PatchMapping("/{id}")
+    public ResponseEntity<ResponseDto> updateEmployee(@PathVariable Integer id , @RequestBody EmployeeUpdateDto employeeUpdateDto) {
+        employeeService.updateEmployee(id , employeeUpdateDto);
+        return ResponseEntity.ok().
+                body(new ResponseDto(EmployeeConstants.STATUS_200 , EmployeeConstants.MESSAGE_200));
     }
 
     @DeleteMapping("/{id}")
