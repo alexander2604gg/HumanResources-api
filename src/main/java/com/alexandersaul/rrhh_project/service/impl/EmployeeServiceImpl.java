@@ -3,6 +3,7 @@ package com.alexandersaul.rrhh_project.service.impl;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeRegisterDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeResponseDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeUpdateDto;
+import com.alexandersaul.rrhh_project.exception.ResourceNotFoundException;
 import com.alexandersaul.rrhh_project.mapper.EmployeeMapper;
 import com.alexandersaul.rrhh_project.model.entity.DocumentType;
 import com.alexandersaul.rrhh_project.model.entity.Employee;
@@ -51,6 +52,13 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
 
         return new PageImpl<>(employeeDtos, pageable, employeePage.getTotalElements());
+    }
+
+    @Override
+    public Employee findEntityById(Integer employeeId) {
+        return employeeRepository.findById(employeeId).orElseThrow(
+                () -> new ResourceNotFoundException("Employee" , "employeeId" , employeeId.toString())
+        );
     }
 
     @Transactional
@@ -104,6 +112,8 @@ public class EmployeeServiceImpl implements IEmployeeService {
         }
         return roles;
     }
+
+
 
     @Override
     public String encryptPassword(String password) {
