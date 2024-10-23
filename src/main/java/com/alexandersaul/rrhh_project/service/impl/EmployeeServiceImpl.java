@@ -1,6 +1,7 @@
 package com.alexandersaul.rrhh_project.service.impl;
 
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeRegisterDto;
+import com.alexandersaul.rrhh_project.dto.employee.EmployeeResponseDto;
 import com.alexandersaul.rrhh_project.mapper.EmployeeMapper;
 import com.alexandersaul.rrhh_project.model.entity.DocumentType;
 import com.alexandersaul.rrhh_project.model.entity.Employee;
@@ -14,10 +15,15 @@ import com.alexandersaul.rrhh_project.service.IRoleService;
 import com.alexandersaul.rrhh_project.service.IUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -34,6 +40,17 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Autowired
     private IUserService userService;
 
+    @Override
+    public Page<EmployeeResponseDto> getEmployeesPaginated(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Employee> employeePage = employeeRepository.findAll(pageable);
+
+        List<EmployeeResponseDto> employeeDtos = employeeMapper.toDtoList(employeePage.getContent());
+
+
+        return new PageImpl<>(employeeDtos, pageable, employeePage.getTotalElements());
+    }
 
     @Transactional
     @Override
@@ -57,6 +74,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
 
         Employee employee = employeeMapper.toEntity(employeeRegisterDto);
+        employee.setActive(true);
         employee.setUser(userSec);
         userSec.setEmployee(employee);
 

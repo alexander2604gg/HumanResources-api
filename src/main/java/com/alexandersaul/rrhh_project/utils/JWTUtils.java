@@ -42,7 +42,7 @@ public class JWTUtils {
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + (30*60000)))
                 .withJWTId(UUID.randomUUID().toString())
-                .withNotBefore(new Date(System.currentTimeMillis() + (30*60000)))
+                .withNotBefore(new Date())
                 .sign(algorithm);
 
     }
