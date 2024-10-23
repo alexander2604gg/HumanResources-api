@@ -1,9 +1,12 @@
 package com.alexandersaul.rrhh_project.mapper;
 
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeRegisterDto;
+import com.alexandersaul.rrhh_project.dto.employee.EmployeeResponseDto;
 import com.alexandersaul.rrhh_project.model.entity.Employee;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface EmployeeMapper {
@@ -14,4 +17,8 @@ public interface EmployeeMapper {
     @Mapping(target = "user", ignore = true)
     Employee toEntity(EmployeeRegisterDto employeeRegisterDto);
 
+    @Mapping(target = "fullName", expression = "java(employee.getFirstName() + ' ' + employee.getMiddleName() + ' ' + employee.getFirstSurname() + ' ' + employee.getSecondSurname())")
+    EmployeeResponseDto toDto(Employee employee);
+
+    List<EmployeeResponseDto> toDtoList(List<Employee> employees);
 }
