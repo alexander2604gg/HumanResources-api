@@ -1,6 +1,7 @@
 package com.alexandersaul.rrhh_project.service.impl;
 
 import com.alexandersaul.rrhh_project.dto.contract.ContractRegisterDto;
+import com.alexandersaul.rrhh_project.dto.contract.ContractResponseDto;
 import com.alexandersaul.rrhh_project.dto.contract.ContractUpdateDto;
 import com.alexandersaul.rrhh_project.exception.ResourceNotFoundException;
 import com.alexandersaul.rrhh_project.mapper.ContractMapper;
@@ -14,8 +15,14 @@ import com.alexandersaul.rrhh_project.service.IContractTypeService;
 import com.alexandersaul.rrhh_project.service.IEmployeeService;
 import com.alexandersaul.rrhh_project.service.IJobService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ContractServiceImpl implements IContractService {
@@ -32,7 +39,23 @@ public class ContractServiceImpl implements IContractService {
     private IContractTypeService contractTypeService;
 
 
+    @Override
+    public List<ContractResponseDto> getContractsByEmployeeId(Integer employeeId) {
+        List<Contract> contractList = contractRepository.findByEmployeeId(employeeId);
+        return contractMapper.toDtoList(contractList);
+    }
 
+    @Override
+    public Page<ContractResponseDto> getContractsPaginated(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Contract> contractPage = contractRepository.findAll(pageable);
+
+        List<ContractResponseDto> contractDtos = contractMapper.toDtoList(contractPage.getContent());
+
+        return new PageImpl<>(contractDtos, pageable, contractPage.getTotalElements());
+
+    }
 
     @Transactional
     @Override
