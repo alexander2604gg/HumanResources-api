@@ -20,14 +20,14 @@ public class ContractController {
     @Autowired
     private IContractService contractService;
 
-    @GetMapping
+    @GetMapping("/by-employee")
     public ResponseEntity<List<ContractResponseDto>> getContractByEmployeeId (@RequestParam Integer employeeId){
         List<ContractResponseDto> contractResponseDtos = contractService.getContractsByEmployeeId(employeeId);
         return ResponseEntity.ok()
                 .body(contractResponseDtos);
     }
 
-    @GetMapping
+    @GetMapping("/paginated")
     public ResponseEntity<Page<ContractResponseDto>> getContractsPaginated (
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "5") int size){
@@ -46,14 +46,14 @@ public class ContractController {
                 .body(new ResponseDto(ContractConstants.STATUS_201 , ContractConstants.MESSAGE_201));
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ResponseDto> updateContract (@PathVariable Integer id, @RequestBody ContractUpdateDto contractUpdateDto){
         contractService.updateContract(id , contractUpdateDto);
         return ResponseEntity.ok()
                 .body(new ResponseDto(ContractConstants.STATUS_200 , ContractConstants.MESSAGE_200_UPDATED));
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}/disable")
     public ResponseEntity<ResponseDto> disableContract (@PathVariable Integer id){
         contractService.disableContract(id);
         return ResponseEntity.ok()
