@@ -11,14 +11,13 @@ import java.util.Collection;
 public class CustomUserDetails extends User {
 
     private Integer userId;
+    private String password; // Agregar el campo password
 
-    public CustomUserDetails(Integer userId, String username, boolean active, Collection<? extends GrantedAuthority> authorities) {
-        super(username, "", active, true, true, true, authorities); // Pasar "" en lugar de null
+    public CustomUserDetails(Integer userId, String username, String password, boolean active, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, active, true, true, true, authorities); // Pasar la contraseña al constructor de la superclase
         this.userId = userId;
+        this.password = password;
     }
 
-    @Override
-    public String getPassword() {
-        return "";
-    }
 }
+

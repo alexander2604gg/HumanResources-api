@@ -48,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .forEach(view -> authorityList.add(new SimpleGrantedAuthority(view.getViewName().toString())));
 
 
-        return new CustomUserDetails( userSec.getId() , userSec.getPassword() ,
+        return new CustomUserDetails( userSec.getId() , userSec.getUserName() , userSec.getPassword() ,
                 userSec.isActive() , authorityList);
     }
 
@@ -64,17 +64,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public Authentication authenticate(String username, String password) {
-        UserDetails userDetails = this.loadUserByUsername(username);
 
-        if (userDetails == null) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) this.loadUserByUsername(username);
+
+        if (customUserDetails == null) {
             throw new BadCredentialsException("invalid username or password");
         }
 
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+        if (!passwordEncoder.matches(password, customUserDetails.getPassword())) {
             throw new BadCredentialsException("invalid username or password");
         }
 
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
     }
 
 

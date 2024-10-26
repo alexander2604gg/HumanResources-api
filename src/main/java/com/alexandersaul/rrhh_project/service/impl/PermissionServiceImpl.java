@@ -42,6 +42,7 @@ public class PermissionServiceImpl implements IPermissionService {
     @Override
     public void createPermission(PermissionRegisterDto permissionRegisterDto) {
         Permission permission = permissionMapper.toEntity(permissionRegisterDto);
+        permission.setEmployee(employeeService.findEntityByUserId(permissionRegisterDto.getUserId()));
         permissionRepository.save(permission);
     }
 
