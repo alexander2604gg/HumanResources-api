@@ -13,6 +13,7 @@ import java.util.Set;
 public interface IEmployeeService {
 
     Page<EmployeeResponseDto> getEmployeesPaginated (int page , int size);
+    Employee findEntityByUserId (Integer userId);
     Employee findEntityById (Integer employeeId);
     String getEmployeeNameByUserId (Integer userId);
     void registerEmployee (EmployeeRegisterDto employeeRegisterDto);
