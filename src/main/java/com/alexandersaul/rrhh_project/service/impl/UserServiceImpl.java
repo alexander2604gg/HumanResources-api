@@ -1,16 +1,20 @@
 package com.alexandersaul.rrhh_project.service.impl;
 
 import com.alexandersaul.rrhh_project.dto.admin.AdminRegisterDto;
+import com.alexandersaul.rrhh_project.dto.user.UserBasicInfoDto;
+import com.alexandersaul.rrhh_project.exception.ResourceNotFoundException;
 import com.alexandersaul.rrhh_project.mapper.UserMapper;
 import com.alexandersaul.rrhh_project.model.entity.Role;
 import com.alexandersaul.rrhh_project.model.entity.UserSec;
 import com.alexandersaul.rrhh_project.model.enums.RoleName;
 import com.alexandersaul.rrhh_project.repository.RoleRepository;
 import com.alexandersaul.rrhh_project.repository.UserSecRepository;
+import com.alexandersaul.rrhh_project.service.IEmployeeService;
 import com.alexandersaul.rrhh_project.service.IRoleService;
 import com.alexandersaul.rrhh_project.service.IUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -30,6 +35,28 @@ public class UserServiceImpl implements IUserService {
     private IRoleService roleService;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    @Lazy
+    private IEmployeeService employeeService;
+
+
+
+    @Override
+    public UserBasicInfoDto getBasicInfo(Integer userId) {
+
+        UserSec userSec = this.findEntityById(userId);
+
+        List<String> rolesName = userSec.getRolesList().stream()
+                .map(role -> role.getRoleName().toString())
+                .collect(Collectors.toList());
+
+        return UserBasicInfoDto.builder()
+                .fullName(employeeService.getEmployeeNameByUserId(userId))
+                .userName(userSec.getUserName())
+                .photoPath(null)
+                .roles(rolesName)
+                .build();
+    }
 
     @Transactional
     @Override
@@ -42,6 +69,13 @@ public class UserServiceImpl implements IUserService {
         userSec.setRolesList(Set.of(adminRole));
 
         userSecRepository.save(userSec);
+    }
+
+    @Override
+    public UserSec findEntityById(Integer userId) {
+        return userSecRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("User" , "userId" , userId.toString())
+        );
     }
 
     @Override

@@ -14,6 +14,7 @@ public interface IEmployeeService {
 
     Page<EmployeeResponseDto> getEmployeesPaginated (int page , int size);
     Employee findEntityById (Integer employeeId);
+    String getEmployeeNameByUserId (Integer userId);
     void registerEmployee (EmployeeRegisterDto employeeRegisterDto);
     void updateEmployee ( Integer employeeId , EmployeeUpdateDto employeeUpdateDto);
     Set<Role> assignRoles (Integer roleId);

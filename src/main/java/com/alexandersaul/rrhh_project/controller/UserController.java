@@ -7,9 +7,6 @@ import com.alexandersaul.rrhh_project.dto.user.UserBasicInfoDto;
 import com.alexandersaul.rrhh_project.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,11 +16,11 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @GetMapping("/perfil")
-    public ResponseEntity<UserBasicInfoDto> getInfo(Authentication authentication) {
-        String username = authentication.getName();
-        UserBasicInfoDto userBasicInfoDto = new UserBasicInfoDto(null, username);
-        return ResponseEntity.ok(userBasicInfoDto);
+    @GetMapping("/info/{id}")
+    public ResponseEntity<UserBasicInfoDto> getBasicInfo(Integer userId) {
+        UserBasicInfoDto userBasicInfoDto = userService.getBasicInfo(userId);
+        return ResponseEntity.ok()
+                .body(userBasicInfoDto);
     }
 
     @PostMapping("/admins")
