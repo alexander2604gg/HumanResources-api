@@ -5,8 +5,10 @@ import com.alexandersaul.rrhh_project.dto.permission.PermissionResponseDto;
 import com.alexandersaul.rrhh_project.dto.permission.PermissionUpdateDto;
 import com.alexandersaul.rrhh_project.exception.ResourceNotFoundException;
 import com.alexandersaul.rrhh_project.mapper.PermissionMapper;
+import com.alexandersaul.rrhh_project.model.entity.Employee;
 import com.alexandersaul.rrhh_project.model.entity.Permission;
 import com.alexandersaul.rrhh_project.repository.PermissionRepository;
+import com.alexandersaul.rrhh_project.service.IEmployeeService;
 import com.alexandersaul.rrhh_project.service.IPermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,14 @@ public class PermissionServiceImpl implements IPermissionService {
     private PermissionRepository permissionRepository;
     @Autowired
     private PermissionMapper permissionMapper;
+    @Autowired
+    private IEmployeeService employeeService;
 
     @Override
     public List<PermissionResponseDto> getPermissionsByUserId(Integer userId) {
-        List<Permission> permissions = null;
+        Employee employee = employeeService.findEntityByUserId(userId);
+        List<Permission> permissions = permissionRepository.findByEmployeeId(employee.getId());
+        return permissionMapper.toDtoList(permissions);
     }
 
     @Override
