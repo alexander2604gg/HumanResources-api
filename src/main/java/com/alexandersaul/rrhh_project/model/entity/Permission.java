@@ -22,7 +22,8 @@ public class Permission {
     private String permissionPath;
     @Enumerated(EnumType.STRING)
     private PermissionType permissionType;
-    @Lob
+    @Column(columnDefinition = "TEXT")
+    @Basic(fetch = FetchType.LAZY)
     private String description;
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "employee_id")
