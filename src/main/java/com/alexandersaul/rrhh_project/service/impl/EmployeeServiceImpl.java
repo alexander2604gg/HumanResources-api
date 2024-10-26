@@ -55,6 +55,13 @@ public class EmployeeServiceImpl implements IEmployeeService {
     }
 
     @Override
+    public Employee findEntityByUserId(Integer userId) {
+        return employeeRepository.findByUserId(userId).orElseThrow(
+                ()-> new ResourceNotFoundException("Employee" , "userId" , userId.toString())
+        );
+    }
+
+    @Override
     public Employee findEntityById(Integer employeeId) {
         return employeeRepository.findById(employeeId).orElseThrow(
                 () -> new ResourceNotFoundException("Employee" , "employeeId" , employeeId.toString())
