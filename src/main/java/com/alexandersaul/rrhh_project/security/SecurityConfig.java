@@ -5,6 +5,7 @@ import com.alexandersaul.rrhh_project.security.filter.JwtTokenValidator;
 import com.alexandersaul.rrhh_project.utils.JWTUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +32,9 @@ public class SecurityConfig {
     @Autowired
     private JWTUtils jwtUtils;
 
+    @Autowired
+    private JwtTokenValidator jwtTokenValidator;
+
     @Bean
     public SecurityFilterChain filterChain (HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -42,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
+                .addFilterBefore(jwtTokenValidator, BasicAuthenticationFilter.class)
                 .build();
     }
 

@@ -4,6 +4,7 @@ import com.alexandersaul.rrhh_project.dto.auth.AuthLoginRequestDto;
 import com.alexandersaul.rrhh_project.dto.auth.AuthResponseDto;
 import com.alexandersaul.rrhh_project.model.entity.UserSec;
 import com.alexandersaul.rrhh_project.repository.UserSecRepository;
+import com.alexandersaul.rrhh_project.security.CustomUserDetails;
 import com.alexandersaul.rrhh_project.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -47,8 +48,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .forEach(view -> authorityList.add(new SimpleGrantedAuthority(view.getViewName().toString())));
 
 
-        return new User(userSec.getUserName() , userSec.getPassword() , userSec.isActive() , true,
-                true, true , authorityList);
+        return new CustomUserDetails( userSec.getId() ,userSec.getUserName() , userSec.getPassword() ,
+                userSec.isActive() , authorityList);
     }
 
     public AuthResponseDto loginUser (AuthLoginRequestDto authLoginRequestDTO) {
@@ -73,7 +74,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new BadCredentialsException("invalid username or password");
         }
 
-        return new UsernamePasswordAuthenticationToken(username,userDetails.getPassword(),userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails,userDetails.getPassword(),userDetails.getAuthorities());
 
     }
 

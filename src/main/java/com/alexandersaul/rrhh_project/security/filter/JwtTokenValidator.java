@@ -1,5 +1,6 @@
 package com.alexandersaul.rrhh_project.security.filter;
 
+import com.alexandersaul.rrhh_project.security.CustomUserDetails;
 import com.alexandersaul.rrhh_project.utils.JWTUtils;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.micrometer.common.lang.NonNull;
@@ -14,11 +15,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collection;
 
+@Component
 public class JwtTokenValidator extends OncePerRequestFilter {
 
     private final JWTUtils jwtUtils;
@@ -27,31 +30,33 @@ public class JwtTokenValidator extends OncePerRequestFilter {
         this.jwtUtils = jwtUtils;
     }
 
-    protected void doFilterInternal (@NonNull HttpServletRequest request,
-                                     @NonNull HttpServletResponse response,
-                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (jwtToken!=null){
+        if (jwtToken != null) {
             jwtToken = jwtToken.substring(7);
             DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
 
             String username = jwtUtils.extractUserName(decodedJWT);
-            String authorities = jwtUtils.getSpecificClaim(decodedJWT,"authorities").asString();
+            String authorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
+            Integer userId = jwtUtils.getSpecificClaim(decodedJWT, "userId").asInt();
 
-            Collection<? extends GrantedAuthority> authoritiesList  = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+            Collection<? extends GrantedAuthority> authoritiesList = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
 
             SecurityContext context = SecurityContextHolder.getContext();
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(username , null ,authoritiesList);
+            CustomUserDetails customUserDetails = new CustomUserDetails(userId, username, null, true, authoritiesList);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetails, null, authoritiesList);
             context.setAuthentication(authentication);
-            SecurityContextHolder.setContext(context);
 
+                SecurityContextHolder.setContext(context);
         }
 
-        filterChain.doFilter(request,response);
-
+        filterChain.doFilter(request, response);
     }
+
 
 }
