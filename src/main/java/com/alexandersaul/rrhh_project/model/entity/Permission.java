@@ -4,6 +4,7 @@ import com.alexandersaul.rrhh_project.model.enums.PermissionType;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -14,14 +15,15 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column (name = "start_date")
-    private Date startDate;
+    private LocalDate startDate;
     @Column (name = "end_date")
-    private Date endDate;
+    private LocalDate endDate;
     @Column (name = "permission_path")
     private String permissionPath;
     @Enumerated(EnumType.STRING)
     private PermissionType permissionType;
-    @Lob
+    @Column(columnDefinition = "TEXT")
+    @Basic(fetch = FetchType.LAZY)
     private String description;
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "employee_id")

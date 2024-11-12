@@ -1,8 +1,10 @@
 package com.alexandersaul.rrhh_project.service.impl;
 
+import com.alexandersaul.rrhh_project.dto.employee.EmployeeInfoDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeRegisterDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeResponseDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeUpdateDto;
+import com.alexandersaul.rrhh_project.exception.ResourceNotFoundException;
 import com.alexandersaul.rrhh_project.mapper.EmployeeMapper;
 import com.alexandersaul.rrhh_project.model.entity.DocumentType;
 import com.alexandersaul.rrhh_project.model.entity.Employee;
@@ -16,6 +18,7 @@ import com.alexandersaul.rrhh_project.service.IRoleService;
 import com.alexandersaul.rrhh_project.service.IUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -39,18 +43,70 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Autowired
     private IDocumentTypeService documentTypeService;
     @Autowired
+    @Lazy
     private IUserService userService;
+
 
     @Override
     public Page<EmployeeResponseDto> getEmployeesPaginated(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Employee> employeePage = employeeRepository.findAll(pageable);
-
+        Page<Employee> employeePage = employeeRepository.findActiveEmployees(true , pageable);
         List<EmployeeResponseDto> employeeDtos = employeeMapper.toDtoList(employeePage.getContent());
-
-
+        
         return new PageImpl<>(employeeDtos, pageable, employeePage.getTotalElements());
+    }
+
+    @Override
+    public Employee findEntityByUserId(Integer userId) {
+        return employeeRepository.findByUserId(userId).orElseThrow(
+                ()-> new ResourceNotFoundException("Employee" , "userId" , userId.toString())
+        );
+    }
+
+    @Override
+    public Employee findEntityById(Integer employeeId) {
+        return employeeRepository.findById(employeeId).orElseThrow(
+                () -> new ResourceNotFoundException("Employee" , "employeeId" , employeeId.toString())
+        );
+    }
+
+    @Override
+    public Employee findEntityByDocumentNumber(String documentNumber) {
+        return employeeRepository.findByDocumentNumber(documentNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Employee" , "documentNumber" , documentNumber)
+        );
+    }
+
+    @Override
+    public EmployeeInfoDto getEmployeeInfoById(Integer employeeId) {
+        Employee employee = findEntityById(employeeId);
+        return employeeMapper.toDtoInfo(employee);
+    }
+
+    @Override
+    public EmployeeInfoDto getEmployeeInfoByUserId(Integer userId) {
+        Employee employee = findEntityByUserId(userId);
+        return employeeMapper.toDtoInfo(employee);
+    }
+
+    @Override
+    public EmployeeResponseDto getEmployeeByDocumentNumber(String documentNumber) {
+        Employee employee = findEntityByDocumentNumber(documentNumber);
+        return employeeMapper.toDto(employee);
+    }
+
+    @Override
+    public String getEmployeeNameByUserId(Integer userId) {
+        Optional<Employee> employeeOptional = employeeRepository.findByUserId(userId);
+        return employeeOptional.map(employee ->
+                String.join(" ",
+                        employee.getFirstName(),
+                        employee.getMiddleName(),
+                        employee.getFirstSurname(),
+                        employee.getSecondSurname()
+                )
+        ).orElse(null);
     }
 
     @Transactional
@@ -77,10 +133,20 @@ public class EmployeeServiceImpl implements IEmployeeService {
         Employee employee = employeeMapper.toEntity(employeeRegisterDto);
         employee.setActive(true);
         employee.setUser(userSec);
+        employee.setDocumentType(documentType);
         userSec.setEmployee(employee);
 
         employeeRepository.save(employee);
 
+    }
+
+    @Override
+    public void updateEmployeeByUserId(Integer userId , EmployeeUpdateDto employeeUpdateDto) {
+        UserSec userSec = userService.findEntityById(userId);
+        Employee employee = userSec.getEmployee();
+        employee.setNumPhone(employeeUpdateDto.getNumPhone());
+        employee.setAddress(employeeUpdateDto.getAddress());
+        employeeRepository.save(employee);
     }
 
     @Override

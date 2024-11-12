@@ -1,12 +1,14 @@
 server:
   port: 8080
+  servlet:
+    context-path: /api/v1
 
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://dpg-cs5fdvd6l47c73f4a9lg-a.oregon-postgres.render.com:5432/db_rrhh
-    username: db_rrhh_user
-    password: 7wWjkt0NxnZMvMRIBRqho18SHctr8VRU
+    url: jdbc:postgresql://dpg-cspb3j1u0jms73bi28d0-a.oregon-postgres.render.com:5432/dbrrhh
+    username: dbrrhh_user
+    password: BCoQXLoCqZKevns4YXGYN4REenHjKnUP
 
   jpa:
     properties:

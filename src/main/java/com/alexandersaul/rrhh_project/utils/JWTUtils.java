@@ -1,5 +1,6 @@
 package com.alexandersaul.rrhh_project.utils;
 
+import com.alexandersaul.rrhh_project.security.CustomUserDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -28,7 +29,7 @@ public class JWTUtils {
     public String createToken (Authentication authentication){
 
         Algorithm algorithm = Algorithm.HMAC256(privateKey);
-        String userName = authentication.getPrincipal().toString();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         String authorities = authentication.getAuthorities()
                 .stream()
@@ -37,7 +38,8 @@ public class JWTUtils {
 
         return JWT.create()
                 .withIssuer(this.userGenerator)
-                .withSubject(userName)
+                .withSubject(customUserDetails.getUsername())
+                .withClaim("userId" , customUserDetails.getUserId())
                 .withClaim("authorities" , authorities)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + (30*60000)))
