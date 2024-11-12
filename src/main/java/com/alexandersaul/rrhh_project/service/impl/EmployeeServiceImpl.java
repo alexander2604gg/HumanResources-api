@@ -1,5 +1,6 @@
 package com.alexandersaul.rrhh_project.service.impl;
 
+import com.alexandersaul.rrhh_project.dto.employee.EmployeeInfoDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeRegisterDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeResponseDto;
 import com.alexandersaul.rrhh_project.dto.employee.EmployeeUpdateDto;
@@ -50,11 +51,9 @@ public class EmployeeServiceImpl implements IEmployeeService {
     public Page<EmployeeResponseDto> getEmployeesPaginated(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Employee> employeePage = employeeRepository.findAll(pageable);
-
+        Page<Employee> employeePage = employeeRepository.findActiveEmployees(true , pageable);
         List<EmployeeResponseDto> employeeDtos = employeeMapper.toDtoList(employeePage.getContent());
-
-
+        
         return new PageImpl<>(employeeDtos, pageable, employeePage.getTotalElements());
     }
 
@@ -70,6 +69,31 @@ public class EmployeeServiceImpl implements IEmployeeService {
         return employeeRepository.findById(employeeId).orElseThrow(
                 () -> new ResourceNotFoundException("Employee" , "employeeId" , employeeId.toString())
         );
+    }
+
+    @Override
+    public Employee findEntityByDocumentNumber(String documentNumber) {
+        return employeeRepository.findByDocumentNumber(documentNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Employee" , "documentNumber" , documentNumber)
+        );
+    }
+
+    @Override
+    public EmployeeInfoDto getEmployeeInfoById(Integer employeeId) {
+        Employee employee = findEntityById(employeeId);
+        return employeeMapper.toDtoInfo(employee);
+    }
+
+    @Override
+    public EmployeeInfoDto getEmployeeInfoByUserId(Integer userId) {
+        Employee employee = findEntityByUserId(userId);
+        return employeeMapper.toDtoInfo(employee);
+    }
+
+    @Override
+    public EmployeeResponseDto getEmployeeByDocumentNumber(String documentNumber) {
+        Employee employee = findEntityByDocumentNumber(documentNumber);
+        return employeeMapper.toDto(employee);
     }
 
     @Override
@@ -109,10 +133,20 @@ public class EmployeeServiceImpl implements IEmployeeService {
         Employee employee = employeeMapper.toEntity(employeeRegisterDto);
         employee.setActive(true);
         employee.setUser(userSec);
+        employee.setDocumentType(documentType);
         userSec.setEmployee(employee);
 
         employeeRepository.save(employee);
 
+    }
+
+    @Override
+    public void updateEmployeeByUserId(Integer userId , EmployeeUpdateDto employeeUpdateDto) {
+        UserSec userSec = userService.findEntityById(userId);
+        Employee employee = userSec.getEmployee();
+        employee.setNumPhone(employeeUpdateDto.getNumPhone());
+        employee.setAddress(employeeUpdateDto.getAddress());
+        employeeRepository.save(employee);
     }
 
     @Override
@@ -136,8 +170,6 @@ public class EmployeeServiceImpl implements IEmployeeService {
         }
         return roles;
     }
-
-
 
     @Override
     public String encryptPassword(String password) {

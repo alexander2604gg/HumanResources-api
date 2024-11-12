@@ -1,4 +1,4 @@
-package com.alexandersaul.rrhh_project.dto.contract;
+package com.alexandersaul.rrhh_project.dto.renewal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,12 +10,10 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContractResponseDto {
+public class RenewalResponseDto {
     private Integer id;
     private Date startDate;
     private Date endDate;
-    private BigDecimal grossSalary;
-    private String job;
-    private String contractType;
-    private boolean active;
+    private BigDecimal newSalary;
+    private String renewalPath;
 }

@@ -3,8 +3,10 @@ package com.alexandersaul.rrhh_project.service.impl;
 import com.alexandersaul.rrhh_project.dto.contract.ContractRegisterDto;
 import com.alexandersaul.rrhh_project.dto.contract.ContractResponseDto;
 import com.alexandersaul.rrhh_project.dto.contract.ContractUpdateDto;
+import com.alexandersaul.rrhh_project.dto.contract.EmployeeContractsDto;
 import com.alexandersaul.rrhh_project.exception.ResourceNotFoundException;
 import com.alexandersaul.rrhh_project.mapper.ContractMapper;
+import com.alexandersaul.rrhh_project.mapper.EmployeeMapper;
 import com.alexandersaul.rrhh_project.model.entity.Contract;
 import com.alexandersaul.rrhh_project.model.entity.ContractType;
 import com.alexandersaul.rrhh_project.model.entity.Employee;
@@ -34,6 +36,8 @@ public class ContractServiceImpl implements IContractService {
     @Autowired
     private IEmployeeService employeeService;
     @Autowired
+    private EmployeeMapper employeeMapper;
+    @Autowired
     private IJobService jobService;
     @Autowired
     private IContractTypeService contractTypeService;
@@ -55,6 +59,13 @@ public class ContractServiceImpl implements IContractService {
 
         return new PageImpl<>(contractDtos, pageable, contractPage.getTotalElements());
 
+    }
+
+    @Override
+    public EmployeeContractsDto getContractByDocumentNumber(String documentNumber) {
+        Employee employee = employeeService.findEntityByDocumentNumber(documentNumber);
+        List<ContractResponseDto> contractResponseDtoList =  getContractsByEmployeeId(employee.getId());
+        return new EmployeeContractsDto(employeeMapper.toDto(employee) , contractResponseDtoList);
     }
 
     @Transactional
@@ -105,6 +116,7 @@ public class ContractServiceImpl implements IContractService {
     public void disableContract(Integer contractId) {
         Contract contract = findEntityById(contractId);
         contract.setActive(false);
+        contract.getEmployee().setActive(false);
         contractRepository.save(contract);
     }
 

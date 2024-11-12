@@ -5,6 +5,7 @@ import com.alexandersaul.rrhh_project.dto.auth.AuthResponseDto;
 import com.alexandersaul.rrhh_project.model.entity.UserSec;
 import com.alexandersaul.rrhh_project.repository.UserSecRepository;
 import com.alexandersaul.rrhh_project.security.CustomUserDetails;
+import com.alexandersaul.rrhh_project.service.IUserService;
 import com.alexandersaul.rrhh_project.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,6 +33,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private JWTUtils jwtUtils;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private IUserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {

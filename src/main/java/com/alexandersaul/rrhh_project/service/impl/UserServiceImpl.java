@@ -46,15 +46,10 @@ public class UserServiceImpl implements IUserService {
 
         UserSec userSec = this.findEntityById(userId);
 
-        List<String> rolesName = userSec.getRolesList().stream()
-                .map(role -> role.getRoleName().toString())
-                .collect(Collectors.toList());
-
         return UserBasicInfoDto.builder()
                 .fullName(employeeService.getEmployeeNameByUserId(userId))
                 .userName(userSec.getUserName())
                 .photoPath(null)
-                .roles(rolesName)
                 .build();
     }
 

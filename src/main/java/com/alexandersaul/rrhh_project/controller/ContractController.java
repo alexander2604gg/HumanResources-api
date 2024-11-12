@@ -3,8 +3,10 @@ import com.alexandersaul.rrhh_project.constants.ContractConstants;
 import com.alexandersaul.rrhh_project.dto.contract.ContractRegisterDto;
 import com.alexandersaul.rrhh_project.dto.contract.ContractResponseDto;
 import com.alexandersaul.rrhh_project.dto.contract.ContractUpdateDto;
+import com.alexandersaul.rrhh_project.dto.contract.EmployeeContractsDto;
 import com.alexandersaul.rrhh_project.dto.response.ResponseDto;
 import com.alexandersaul.rrhh_project.service.IContractService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,13 @@ public class ContractController {
                 .body(contractResponseDtos);
     }
 
+    @GetMapping("/by-dni")
+    public ResponseEntity<EmployeeContractsDto> getContractByDni (@RequestParam String dni) {
+        EmployeeContractsDto employeeContractsDto = contractService.getContractByDocumentNumber(dni);
+        return ResponseEntity.ok()
+                .body(employeeContractsDto);
+    }
+
     @GetMapping("/paginated")
     public ResponseEntity<Page<ContractResponseDto>> getContractsPaginated (
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -40,7 +49,7 @@ public class ContractController {
 
 
     @PostMapping
-    public ResponseEntity<ResponseDto> createContract (@RequestBody ContractRegisterDto contractRegisterDto){
+    public ResponseEntity<ResponseDto> createContract (@RequestBody @Valid ContractRegisterDto contractRegisterDto){
         contractService.registerContract(contractRegisterDto);
         return ResponseEntity.ok()
                 .body(new ResponseDto(ContractConstants.STATUS_201 , ContractConstants.MESSAGE_201));

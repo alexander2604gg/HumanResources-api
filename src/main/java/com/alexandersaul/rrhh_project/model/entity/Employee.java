@@ -27,7 +27,10 @@ public class Employee {
     private LocalDate dateOfBirth;
     @Column(length = 100)
     private String address;
-    @Column(length = 15)
+    @ManyToOne
+    @JoinColumn(name = "document_type_id" , referencedColumnName = "id")
+    private DocumentType documentType;
+    @Column(length = 15 , unique = true)
     private String documentNumber;
     private boolean active;
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
