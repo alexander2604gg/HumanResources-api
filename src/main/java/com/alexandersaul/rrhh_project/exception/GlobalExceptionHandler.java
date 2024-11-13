@@ -42,5 +42,29 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ActiveContractExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleActiveContractExistsException (ActiveContractExistsException exception,
+                                                                             WebRequest webRequest) {
+        ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDTO,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidRenewalException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidRenewalException (InvalidRenewalException exception,
+                                                                                 WebRequest webRequest) {
+        ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDTO,HttpStatus.BAD_REQUEST);
+    }
+
 
 }
