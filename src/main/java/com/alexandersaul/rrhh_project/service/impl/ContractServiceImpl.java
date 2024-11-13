@@ -4,6 +4,7 @@ import com.alexandersaul.rrhh_project.dto.contract.ContractRegisterDto;
 import com.alexandersaul.rrhh_project.dto.contract.ContractResponseDto;
 import com.alexandersaul.rrhh_project.dto.contract.ContractUpdateDto;
 import com.alexandersaul.rrhh_project.dto.contract.EmployeeContractsDto;
+import com.alexandersaul.rrhh_project.exception.ActiveContractExistsException;
 import com.alexandersaul.rrhh_project.exception.ResourceNotFoundException;
 import com.alexandersaul.rrhh_project.mapper.ContractMapper;
 import com.alexandersaul.rrhh_project.mapper.EmployeeMapper;
@@ -24,6 +25,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -72,9 +75,14 @@ public class ContractServiceImpl implements IContractService {
     @Override
     public void registerContract(ContractRegisterDto contractRegisterDto) {
 
+        if (this.hasActiveContract(contractRegisterDto.getEmployeeId())) {
+            throw new ActiveContractExistsException();
+        }
+
         Employee employee = employeeService.findEntityById(contractRegisterDto.getEmployeeId());
         Job job = jobService.findEntityById(contractRegisterDto.getJobId());
         ContractType contractType = contractTypeService.findEntityById(contractRegisterDto.getContractTypeId());
+
         Contract contract = contractMapper.toEntity(contractRegisterDto);
         contract.setEmployee(employee);
         contract.setJob(job);
@@ -82,8 +90,8 @@ public class ContractServiceImpl implements IContractService {
         contract.setActive(true);
 
         contractRepository.save(contract);
-
     }
+
 
     @Transactional
     @Override
@@ -119,5 +127,13 @@ public class ContractServiceImpl implements IContractService {
         contract.getEmployee().setActive(false);
         contractRepository.save(contract);
     }
+
+    @Override
+    public boolean hasActiveContract(Integer employeeId) {
+        List<Contract> contractList = contractRepository.findByEmployeeId(employeeId);
+        return contractList.stream()
+                .anyMatch(Contract::isActive);
+    }
+
 
 }

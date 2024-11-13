@@ -18,4 +18,6 @@ public interface IContractService {
     void updateContract (Integer contractId , ContractUpdateDto contractUpdateDto);
     Contract findEntityById (Integer contractId);
     void disableContract (Integer contractId);
+    boolean hasActiveContract (Integer employeeId);
+
 }
