@@ -1,14 +1,14 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT}
   servlet:
     context-path: /api/v1
 
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://dpg-cspb3j1u0jms73bi28d0-a.oregon-postgres.render.com:5432/dbrrhh
-    username: dbrrhh_user
-    password: BCoQXLoCqZKevns4YXGYN4REenHjKnUP
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
 
   jpa:
     properties:
@@ -24,6 +24,6 @@ spring:
 security:
   jwt:
     private:
-      key: ${PRIVATE-KEY}
+      key: ${PRIVATE_KEY}
     user:
-      generator: ${USER-GENERATOR}
+      generator: ${USER_GENERATOR}
